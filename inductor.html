@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+   <!--
+inductor
+   -->
+
+<link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/9wAA7usAAFVRAAC7uwAA//cAAPrfAAD63wAA+t8AAPjfAAD7jwAA+98AAPvfAAD71wAA++8AAP//AAD//wAA" rel="icon" type="image/x-icon">
+
+
+
+   <title>inductor</title>    
+   <script src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+   <script src = "geometron.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"></script> 
+</head>
+<body>    
+    <a href ="index.html">index.html</a>
+    <div id = "qrcode"></div>
+    <H1>Inductor</H1>
+    <table>
+        <tr>
+            <td>size:</td>
+            <td>
+                <input id ="sizeinput">
+            </td>
+        </tr>
+        <tr>
+            <td>linewidth:</td>
+            <td>
+                <input id ="linewidthinput">
+            </td>
+        </tr>
+        <tr>
+            <td>color:</td>
+            <td>
+                <input id ="colorinput">
+            </td>
+        </tr>
+        <tr>
+            <td>angle:</td>
+            <td>
+                <input id ="angleinput">
+            </td>
+        </tr>
+    </table>
+    <div class = "postbutton" id = "savepngbutton">Save PNG</div>
+    <div class = "postbutton" id = "savesvgbutton">Save SVG</div>
+
+    <div class = "canbox">
+        <canvas id = "inductor"></canvas>
+    </div>
+    <img src="inductor-spelling.svg">
+    <img src="https://quantum-amplifier.art/symbol1779064892.svg">
+    <pre>
+        inductorshapes = [
+    "0220:0336,0366,0330,0333,0333,0336,0331,0337,0367,0335,0335,0366,0331,0333,0333,0367,0335,0335,0337,",
+    "0221:0336,0331,0337,0314,0336,0313,0220,0220,0220,0220,0314,0337,0313,0342,0331,0335,0335,0342,0335,0335,0336,0330,0337,",
+    "0222:0220,0220,0220,0342,0335,0335,0330,0330,0336,0330,0337,0336,0336,0331,0337,0337,0342,0335,0335,",
+    "0223:0220,0220,0220,0220,0220,0342,0335,0335,0330,0330,0330,0330,0336,0336,0331,0337,0337,0342,0335,0335,0333,0333,0335,0332,0332,0332,0336,0330,0337,0335,0220,0335,0334,0334,0335,0220,0220,0220,0342,0335,0335,0330,0330,0330,0342,0331,0332,0331,0332,0331,0336,0332,0337,",
+    "0224:0221,",
+    "01220:0333,0200,0336,0330,0332,0336,0331,0337,0336,0332,0337,0220,0331,0333,0336,0333,0331,0336,0330,0337,0337,0337,",
+    "01221:0333,0200,0336,0332,0337,0221,0331,0336,0333,0337,",
+    "01222:0333,0200,0336,0332,0336,0330,0222,0331,0333,0333,0337,0337,",
+    "01223:0333,0200,0336,0332,0332,0336,0333,0330,0223,0331,0333,0333,0333,0336,0337,0337,0337,"
+];
+    </pre>
+    <h1>Inductor Feed</h1>
+    <div id = "inductorfeed"></div>
+<script>
+
+
+
+
+codesquaresize = 170;
+marginsize = 40;
+fontsize = 12;
+//globalurl = "http://www.trashrobot.org/qrcode.html";
+globalurl = window.location.href;
+qrcode = new QRCode(document.getElementById("qrcode"), {
+	text: globalurl,
+	width: codesquaresize,
+	height: codesquaresize,
+	colorDark : "#000000",
+	colorLight : "#ffffff",
+	correctLevel : QRCode.CorrectLevel.H
+});
+
+inductorshapes = [
+    "0220:0336,0366,0330,0333,0333,0336,0331,0337,0367,0335,0335,0366,0331,0333,0333,0367,0335,0335,0337,",
+    "0221:0336,0331,0337,0314,0336,0313,0220,0220,0220,0220,0314,0337,0313,0342,0331,0335,0335,0342,0335,0335,0336,0330,0337,",
+    "0222:0220,0220,0220,0342,0335,0335,0330,0330,0336,0330,0337,0336,0336,0331,0337,0337,0342,0335,0335,",
+    "0223:0220,0220,0220,0220,0220,0342,0335,0335,0330,0330,0330,0330,0336,0336,0331,0337,0337,0342,0335,0335,0333,0333,0335,0332,0332,0332,0336,0330,0337,0335,0220,0335,0334,0334,0335,0220,0220,0220,0342,0335,0335,0330,0330,0330,0342,0331,0332,0331,0332,0331,0336,0332,0337,",
+    "0224:0221,",
+    "01220:0333,0200,0336,0330,0332,0336,0331,0337,0336,0332,0337,0220,0331,0333,0336,0333,0331,0336,0330,0337,0337,0337,",
+    "01221:0333,0200,0336,0332,0337,0221,0331,0336,0333,0337,",
+    "01222:0333,0200,0336,0332,0336,0330,0222,0331,0333,0333,0337,0337,",
+    "01223:0333,0200,0336,0332,0332,0336,0333,0330,0223,0331,0333,0333,0333,0336,0337,0337,0337,"
+];
+
+
+iconsize = 100;
+inductorcanvas = document.getElementById("inductor");
+
+
+inductoricon = {};
+
+var httpc = new XMLHttpRequest();
+httpc.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        inductoricon = JSON.parse(this.responseText);
+        document.getElementById("sizeinput").value = inductoricon.size;
+        document.getElementById("linewidthinput").value = inductoricon.linewidth;
+        document.getElementById("colorinput").value = inductoricon.color;
+        document.getElementById("angleinput").value = inductoricon.angle;
+        drawinductor();
+    }
+};
+httpc.open("GET", "load-file.php?filename=inductoricon.json", true);
+httpc.send();
+
+document.getElementById("sizeinput").onchange = function(){
+    inductoricon.size = parseInt(this.value);
+    drawinductor();
+    saveinductoricon();
+}
+document.getElementById("linewidthinput").onchange = function(){
+    inductoricon.linewidth = parseFloat(this.value);
+    drawinductor();
+    saveinductoricon();
+}
+
+document.getElementById("colorinput").onchange = function(){
+    inductoricon.color = this.value;
+    drawinductor();
+    saveinductoricon();
+}
+
+document.getElementById("angleinput").onchange = function(){
+    inductoricon.angle = parseFloat(this.value);
+    drawinductor();
+    saveinductoricon();
+}
+
+
+/*
+inductoricon.size = 100;
+inductoricon.linewidth = 10;
+inductoricon.color = "black";
+inductoricon.angle = 0;//90 + 180*inductorGVM.theta0/Math.PI
+
+saveinductoricon();*/
+
+function drawinductor(){
+    inductorGVM = new GVM(inductorcanvas,inductoricon.size,inductoricon.size);
+    inductorGVM.importbytecode(hypercube);
+    inductorGVM.importbytecode(inductorshapes);
+    inductorGVM.style.line0  = inductoricon.linewidth;
+    inductorGVM.style.color0 = inductoricon.color;
+
+    inductorGVM.unit = 0.7*inductoricon.size;
+    inductorGVM.drawGlyph(inductorGVM.hypercube[0221]);
+    //inductorGVM.theta0 += 0.1;
+    inductorGVM.theta0 = (-Math.PI/2) + Math.PI*inductoricon.angle/180;
+    inductorGVM.drawGlyph(inductorGVM.hypercube[0221]);
+
+}
+
+function saveinductoricon(){
+    var url = "save-file.php";        
+    var httpc = new XMLHttpRequest();
+    httpc.open("POST", url, true);
+    httpc.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    httpc.send("data="+encodeURIComponent(JSON.stringify(inductoricon,null,"    "))+"&filename=inductoricon.json");//send text to filesaver.php
+}
+
+
+document.getElementById("savepngbutton").onclick = function(){
+    var timestamp = Math.round((new Date().getTime())/1000).toString();
+    var httpc = new XMLHttpRequest();
+    var url = "save-png.php";        
+    httpc.open("POST", url, true);
+    httpc.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    httpc.send("data="+encodeURIComponent(inductorGVM.pngcode().substring(22))+"&filename=inductor" + timestamp +  ".png");//send text to filesaver.php
+}
+
+document.getElementById("savesvgbutton").onclick = function(){
+    
+    currentjson = {};
+    currentjson.style = inductorGVM.style;
+    currentjson.glyph = inductorGVM.hypercube[0221];
+    currentjson.shapes = inductorshapes;
+    currentjson.x0 = inductorGVM.x0;
+    currentjson.y0 = inductorGVM.y0;
+    currentjson.unit = inductorGVM.unit;
+    currentjson.width = inductorGVM.width;
+    currentjson.height = inductorGVM.height;
+    
+    inductorGVM.svgString = inductorGVM.svgString.split("<json>")[0] + "<json>" + JSON.stringify(currentjson,null,"  ") + "</json>" + inductorGVM.svgString.split("</json>")[1];
+        
+    var timestamp = Math.round((new Date().getTime())/1000).toString();
+    var httpc2 = new XMLHttpRequest();
+    httpc2.open("POST","save-file.php", true);
+    httpc2.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    httpc2.send("data="+encodeURIComponent(inductorGVM.svgString) +"&filename=inductor" + timestamp +  ".svg");//send text to filesaver.php
+    
+}
+
+    
+
+
+shape0220 = "0314,0336,0313,0333,0331,0331,0337,0337,0332,0362,0203,0336,0336,0333,0350,0334,0345,0335,0330,0335,0335,0337,0337,0203,0336,0336,0335,0333,0334,0334,0345,0335,0330,0335,0335,0337,0337,0203,0335,0336,0336,0333,0334,0334,0345,0335,0330,0335,0335,0337,0337,0203,0335,0336,0336,0333,0334,0334,0345,0333,0364,0335,0335,0335,0304,0337,0330,0333,0336,0333,0314,0337,0313,";
+
+deleteglyph = "0321,0220,0322,0350,0335,0304,0336,0336,0334,0335,0330,0332,0362,0203,0203,0203,0335,0203,0203,0335,0203,0203,0203,0334,0203,0203,0203,0335,0203,0203,0335,0203,0203,0203,0334,0203,0203,0203,0335,0203,0203,0335,0203,0203,0203,0334,0203,0203,0203,0335,0203,0203,0335,0203,0203,0203,0363,0320,0335,0335,0331,0332,0350,0335,0304,";
+
+files = [];
+var httpc4 = new XMLHttpRequest();
+httpc4.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        files = JSON.parse(this.responseText);
+        for(var index = files.length - 1;index >= 0;index--) {
+            
+            if(files[index].includes("inductor1") && (files[index].includes(".png") || files[index].includes(".PNG") ||files[index].includes(".SVG") ||files[index].includes(".svg") )){
+            
+                var newp = document.createElement("P");
+                var newimg = document.createElement("IMG");
+                newimg.src = files[index];
+                newimg.classList.add("button");
+                newimg.classList.add("feedimage");
+                document.getElementById("inductorfeed").appendChild(newp);
+                newp.appendChild(newimg);
+                
+                newimg.onclick = function() {
+                    var localurl = this.src;
+                    loadsymbol(localurl);
+                    filename = this.src;
+                    document.getElementById("fromfile").value = filename;
+                }                
+    
+            
+                var newlabel = document.createElement("P");
+                newlabel.className = "typelabel";
+                if(files[index].substr(-4) == ".png"){
+                    newlabel.innerHTML = "PNG";
+                    newlabel.style.color = "red";
+                    newimg.style.borderColor = "red";
+                }
+                if(files[index].substr(-4) == ".svg"){
+                    newlabel.innerHTML = "SVG";
+                    newlabel.style.color = "blue";
+                    newimg.style.borderColor = "blue";
+                }
+                newp.appendChild(newlabel);
+    
+                var newdiv = document.createElement("DIV");
+                newdiv.innerHTML = files[index];
+                newdiv.className = "filename";
+                newp.appendChild(newdiv);
+                
+                var delspan = document.createElement("SPAN");
+                var delcan = document.createElement("CANVAS");
+                delspan.appendChild(delcan);
+                newp.appendChild(delspan);
+                delcan.className = "button";
+                var newGVM = new GVM(delcan,50,50);
+                newGVM.x0 = 25;
+                newGVM.y0 = 25;
+                newGVM.unit = 20;
+//                newGVM.style.line1 = 10;
+                newGVM.importbytecode(hypercube);
+                newGVM.hypercube[0220] = shape0220;
+                newGVM.drawGlyph(deleteglyph);
+
+                newp.style.border = "solid";
+                delcan.onclick = function(){
+                    imagesrcurl = this.parentNode.parentNode.getElementsByTagName("IMG")[0].src;
+                    imageurlarray = imagesrcurl.split("/");
+                    filename = imageurlarray[imageurlarray.length-1];             
+            //        console.log(filename);
+                    var httpc = new XMLHttpRequest();
+                    var url = "delete-file.php";         
+                    httpc.open("POST", url, true);
+                    httpc.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+                    httpc.send("filename=" + filename);//send text to deletefile.php
+                    document.getElementById("inductorfeed").removeChild(this.parentNode.parentNode);
+                    
+
+                }
+    
+    
+                
+            }
+        }
+    }
+};
+
+httpc4.open("GET", "list-files.php", true);
+httpc4.send();
+
+</script>
+<style>
+body{
+    font-family:Arial;
+}
+    pre{
+    font-family:courier;
+    overflow:scroll;
+}
+h1{
+    text-align:center;
+    font-size:4em;
+}
+p img{
+    max-width:80%;
+    display:block;
+    margin:auto;
+}
+.feedimage{
+    border:solid;
+    border-width:0.5px;
+}
+p{
+
+}
+a{
+    text-align:center;
+    font-size:3em;
+    width:80%;
+    margin:auto;
+    display:block;
+    border:solid;
+    border-radius:0.5em;
+    border-width:0.5em;
+    color:black;
+    margin-top:1em;
+    margin-bottom:0.5em;
+    overflow-x:scroll;
+}
+img{
+    display:block;
+    max-width:50%;
+    margin:auto;
+    margin-top:2em;
+    margin-bottom:2em;
+}
+
+    #image-feed img{
+        border:solid;
+        border-radius:1em;
+        border-width:5px;
+    }
+    button{
+        font-size:2em;
+    }
+    li{
+        margin-top:0.25em;
+        margin-bottom:0.25em;
+        border-radius:0.125em;
+    }
+
+canvas{
+
+
+}
+.canbox{
+
+    display:block;
+    margin:auto;
+}
+.postbutton{
+    border:solid;
+    width:16em;
+    text-align:center;
+    cursor:pointer;
+    margin-top:0.5em;
+}
+.button{
+    cursor:pointer;
+}
+.postbutton:hover{
+    background-color:green;
+}
+.postbutton:active{
+    background-color:yellow;
+}
+
+.button:hover{
+    background-color:green;
+}
+.button:active{
+    background-color:yellow;
+}
+canvas:hover{
+    background-color:#dddddd;
+}
+.filename{
+    display:none;
+}
+</style>
+</body>
+</html>
+
+
+    
+    
